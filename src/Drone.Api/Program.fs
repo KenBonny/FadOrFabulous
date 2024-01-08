@@ -2,11 +2,11 @@ module Program
 
 #nowarn "20"
 open Drone.Api.Database.DroneContext
-open Drone.Api.Features
 open Microsoft.AspNetCore.Builder
 open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open Microsoft.OpenApi.Models
 open Wolverine
 open Wolverine.Http
 
@@ -25,6 +25,12 @@ let main args =
     builder.Services
         .AddEndpointsApiExplorer()
         .AddDbContext<DroneContext>(configureEF)
+        .AddSwaggerGen(fun c ->
+            c.SwaggerDoc("v1", OpenApiInfo(
+                Version = "v1",
+                Title = "Drone API",
+                Description = "Drone API to track drones across the sky"
+            )))
     builder.Host.UseWolverine()
 
     let app = builder.Build()
@@ -32,6 +38,7 @@ let main args =
     app.UseHttpsRedirection()
     // app.UseAuthorization()
     app.MapWolverineEndpoints()
+    app.UseSwagger().UseSwaggerUI(fun o -> o.ConfigObject.TryItOutEnabled <- true)
 
     app.Run()
 
