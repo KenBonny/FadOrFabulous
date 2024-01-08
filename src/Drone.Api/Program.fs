@@ -1,12 +1,17 @@
-namespace Drone.Api
+module Program
+
 #nowarn "20"
+open Drone.Api.Database.DroneContext
+open Drone.Api.Features
 open Microsoft.AspNetCore.Builder
+open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open Wolverine
+open Wolverine.Http
 
-module Program =
-    [<Literal>]
-    let exitCode = 0
+[<Literal>]
+let exitCode = 0
 
 let configureEF (options:DbContextOptionsBuilder) =
     options.UseInMemoryDatabase("DroneDb")
@@ -15,18 +20,19 @@ let configureEF (options:DbContextOptionsBuilder) =
 [<EntryPoint>]
 let main args =
 
-        let builder = WebApplication.CreateBuilder(args)
+    let builder = WebApplication.CreateBuilder(args)
 
-        builder.Services.AddControllers()
+    builder.Services
+        .AddEndpointsApiExplorer()
         .AddDbContext<DroneContext>(configureEF)
+    builder.Host.UseWolverine()
 
-        let app = builder.Build()
+    let app = builder.Build()
 
-        app.UseHttpsRedirection()
+    app.UseHttpsRedirection()
+    // app.UseAuthorization()
+    app.MapWolverineEndpoints()
 
-        app.UseAuthorization()
-        app.MapControllers()
+    app.Run()
 
-        app.Run()
-
-        exitCode
+    exitCode
