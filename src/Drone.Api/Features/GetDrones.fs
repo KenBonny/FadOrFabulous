@@ -17,6 +17,22 @@ let skip' page pageSize =
     let pageSize = defaultPageSize pageSize
     page * pageSize
 
+/// <summary>
+/// Get a list of drones
+/// </summary>
+/// <param name="page">The page to retrieve</param>
+/// <param name="pageSize">The number of items per page</param>
+/// <param name="context">The database connection</param>
+/// <remarks>
+/// Sample request:
+///   GET /drones
+///   [
+///     {
+///       "make": "DJI",
+///       "model": "Mavic 3 Pro"
+///     }
+///   ]
+/// </remarks>
 [<Tags("Drone")>]
 [<WolverineGet("drones")>]
 let getDrones page pageSize (context: DroneContext) =

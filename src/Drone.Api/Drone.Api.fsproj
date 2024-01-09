@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <InvariantGlobalization>true</InvariantGlobalization>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,6 +11,7 @@
         <Compile Include="Database\DroneContext.fs" />
         <Compile Include="Features\GetDrones.fs" />
         <Compile Include="Features\AddDrone.fs" />
+        <Compile Include="WolverineOperationFilter.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
