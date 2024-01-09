@@ -9,6 +9,7 @@
         <Compile Include="Domain\Drone.fs" />
         <Compile Include="Database\DroneContext.fs" />
         <Compile Include="Features\GetDrones.fs" />
+        <Compile Include="Features\AddDrone.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
