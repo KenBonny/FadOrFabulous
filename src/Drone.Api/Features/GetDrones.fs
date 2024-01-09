@@ -3,6 +3,7 @@
 open System
 open Drone.Api.Database.DroneContext
 open Drone.Api.Domain.Drone
+open Microsoft.AspNetCore.Http
 open Wolverine.Http
 
 type DroneDto = { Make: string; Model: Model }
@@ -16,6 +17,7 @@ let skip' page pageSize =
     let pageSize = defaultPageSize pageSize
     page * pageSize
 
+[<Tags("Drone")>]
 [<WolverineGet("drones")>]
 let getDrones page pageSize (context: DroneContext) =
     query {

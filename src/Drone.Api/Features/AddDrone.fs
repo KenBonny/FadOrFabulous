@@ -12,6 +12,7 @@ type CreateDrone = {
 
 type CreatedDrone = DroneId
 
+[<Tags("Drone")>]
 [<WolverinePost("drone")>]
 let createDrone (droneDto: CreateDrone) (context: DroneContext) =
     task {
