@@ -9,9 +9,3 @@ type Drone = {
     Make: Make
     Model: Model
 }
-
-[<CLIMutable>]
-type Page = {
-    PageNumber: int
-    PageSize: int
-}
