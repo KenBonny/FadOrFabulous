@@ -1,21 +1,22 @@
 ﻿module Drone.Api.Features.GetDrones
 
 open System
+open System.Linq
 open Drone.Api.Database.DroneContext
 open Drone.Api.Domain.Drone
 open Microsoft.AspNetCore.Http
+open Microsoft.EntityFrameworkCore
 open Wolverine.Http
 
 type DroneDto = { Make: string; Model: Model }
 
-let inline (&?) defaultValue (value: 'a Nullable) =
+let inline (&?) (value: 'a Nullable) defaultValue =
     if value.HasValue then value.Value else defaultValue
-let defaultPageSize = (&?) 200
 
-let skip' page pageSize =
-    let page = (1 &? page) - 1
-    let pageSize = defaultPageSize pageSize
-    page * pageSize
+let retrievePage page pageSize =
+    let page = (page &? 1) - 1
+    let pageSize = pageSize &? 200
+    page * pageSize, pageSize
 
 /// <summary>
 /// Get a list of drones
@@ -36,14 +37,14 @@ let skip' page pageSize =
 [<Tags("Drone")>]
 [<WolverineGet("drones")>]
 let getDrones page pageSize (context: DroneContext) =
-    query {
-        for drone in context.Drones do
-        sortBy drone.Make
-        thenBy drone.Model
-        skip (skip' page pageSize)
-        take (defaultPageSize pageSize)
-        select
+    let page, pageSize = retrievePage page pageSize
+
+    context.Drones
+        .OrderBy(fun drone -> drone.Make)
+        .ThenBy(fun drone -> drone.Model)
+        .Skip(page)
+        .Take(pageSize)
+        .Select(fun drone ->
             { Make = drone.Make
-              Model = drone.Model }
-    }
-    |> Seq.toList
+              Model = drone.Model })
+        .ToListAsync()
