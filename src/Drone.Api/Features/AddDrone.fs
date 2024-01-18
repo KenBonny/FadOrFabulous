@@ -10,6 +10,10 @@ type CreateDrone = {
     Model: string
 }
 
+type DroneCreated = {
+    Drone: Drone
+}
+
 type CreatedDrone = DroneId
 
 [<Tags("Drone")>]
@@ -23,5 +27,5 @@ let createDrone (droneDto: CreateDrone) (context: DroneContext) =
         }
         context.Add drone |> ignore
         let! _ = context.SaveChangesAsync()
-        return Results.Created("/drones", drone.Id)
+        return struct (Results.Created("/drones", drone.Id), { Drone = drone })
     }

@@ -11,6 +11,8 @@
         <Compile Include="Database\DroneContext.fs" />
         <Compile Include="Features\GetDrones.fs" />
         <Compile Include="Features\AddDrone.fs" />
+        <Compile Include="Features\NotifySubscribersOfNewDrone.fs" />
+        <Compile Include="Features\NotifySubscribersHandler.fs" />
         <Compile Include="WolverineOperationFilter.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
