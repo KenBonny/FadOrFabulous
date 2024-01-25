@@ -1,11 +1,13 @@
 module Program
 
 #nowarn "20"
+open System
 open System.IO
 open Drone.Api.Database.DroneContext
 open Drone.Api.WolverineOperationFilter
 open Microsoft.AspNetCore.Builder
 open Microsoft.EntityFrameworkCore
+open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.OpenApi.Models
@@ -13,6 +15,7 @@ open Swashbuckle.AspNetCore.SwaggerGen
 open Swashbuckle.AspNetCore.SwaggerUI
 open Wolverine
 open Wolverine.Http
+open Wolverine.RabbitMQ
 
 [<Literal>]
 let exitCode = 0
@@ -37,6 +40,18 @@ let configureSwaggerUi (options:SwaggerUIOptions) =
     options.ConfigObject.TryItOutEnabled <- true
     ()
 
+let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
+    options
+        .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
+        .EnableWolverineControlQueues()
+        .AutoProvision()
+        .UseConventionalRouting(fun r ->
+            r.QueueNameForListener(fun t -> t.Name)
+            r.ExchangeNameForSending(fun t -> t.Name)
+            ()
+        )
+    ()
+
 [<EntryPoint>]
 let main args =
 
@@ -46,7 +61,7 @@ let main args =
         .AddEndpointsApiExplorer()
         .AddDbContext<DroneContext>(configureEF)
         .AddSwaggerGen(configureSwaggerGen)
-    builder.Host.UseWolverine()
+    builder.Host.UseWolverine(configureWolverine builder.Configuration)
 
     let app = builder.Build()
 
