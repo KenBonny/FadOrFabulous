@@ -3,5 +3,5 @@
 open Messages
 
 type Handler () =
-    member this.Handle (message: DroneEvents) =
-        printfn $"Does it work with Type? drone registered: {message}"
+    member this.Handle (message: DroneMessage) =
+        printfn $"Does it work with Type? drone registered: {message.Payload}"

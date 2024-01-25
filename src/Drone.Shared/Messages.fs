@@ -11,6 +11,15 @@ type SharedMessage = {
   text: string
 }
 
-type DroneEvents =
+type DroneEvent =
     | DroneCreated of Drone
     | DronesListed of Drone list
+
+type DroneMessage = {
+    Payload: DroneEvent
+}
+
+let toMessage (event:DroneEvent) =
+    {
+        Payload = event
+    }

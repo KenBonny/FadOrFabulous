@@ -53,5 +53,5 @@ let getDrones page pageSize (context: DroneContext) =
                 { Make = drone.Make
                   Model = drone.Model })
                     .ToList()
-        return struct (dtos, DronesListed(drones |> List.ofSeq))
+        return struct (dtos, DronesListed(drones |> List.ofSeq) |> toMessage)
     }

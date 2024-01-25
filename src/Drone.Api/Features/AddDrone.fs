@@ -27,5 +27,6 @@ let createDrone (droneDto: CreateDrone) (context: DroneContext) =
         context.Add drone |> ignore
         let! _ = context.SaveChangesAsync()
         let msg: SharedMessage = { id = drone.Id; text = drone.Model }
-        return struct (Results.Created("/drones", drone.Id), DroneCreated(drone), { id = drone.Id; text = drone.Model })
+        let droneCreated = DroneCreated(drone) |> toMessage
+        return struct (Results.Created("/drones", drone.Id), droneCreated, msg)
     }
