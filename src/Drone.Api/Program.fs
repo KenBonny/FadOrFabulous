@@ -41,15 +41,16 @@ let configureSwaggerUi (options:SwaggerUIOptions) =
     ()
 
 let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
-    options
-        .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
-        .EnableWolverineControlQueues()
-        .AutoProvision()
-        .UseConventionalRouting(fun r ->
-            r.QueueNameForListener(Messages.createQueueName)
-            r.ExchangeNameForSending(Messages.createQueueName)
-            ()
-        )
+    options.ServiceName <- "Drone.Api"
+    // options
+    //     .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
+    //     .EnableWolverineControlQueues()
+    //     .AutoProvision()
+    //     .UseConventionalRouting(fun r ->
+    //         r.QueueNameForListener(Messages.createQueueName)
+    //         r.ExchangeNameForSending(Messages.createQueueName)
+    //         ()
+    //     )
     ()
 
 [<EntryPoint>]

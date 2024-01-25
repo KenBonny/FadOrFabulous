@@ -2,15 +2,20 @@
 
 open System
 open System.Threading.Tasks
-open Drone.Api.Features.AddDrone
+open Messages
 open Wolverine.Attributes
 
 [<WolverineHandler>]
-let notifyWithDelay (message: DroneCreated) =
+let notifyWithDelay (message: DroneEvents) =
     task {
         do! Task.Delay(TimeSpan.FromSeconds 2)
-        printfn $"Does it work with attributes? drone registered: {message.Drone}"
+        printfn $"Does it work with attributes? drone registered: {message}"
     }
 
-let Handle (message: DroneCreated) =
-    printfn $"Does it work with correct naming? drone registered: {message.Drone}"
+[<WolverineHandler>]
+let processSharedMessage (message: SharedMessage) =
+    printfn $"Shared message handled: {message}"
+
+let Handle = function
+    | DroneCreated drone -> printfn $"Does it work with correct naming? drone registered: {drone}"
+    | DronesListed drones -> printfn $"Does it work with correct naming? drones list: {drones}"

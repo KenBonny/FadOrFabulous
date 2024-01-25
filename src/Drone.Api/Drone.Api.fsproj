@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Domain\Drone.fs" />
+        <Folder Include="Domain\" />
         <Compile Include="Database\DroneContext.fs" />
         <Compile Include="Features\GetDrones.fs" />
         <Compile Include="Features\AddDrone.fs" />

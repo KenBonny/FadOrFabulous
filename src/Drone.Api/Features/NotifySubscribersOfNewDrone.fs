@@ -1,7 +1,7 @@
 ﻿module Drone.Api.Features.NotifySubscribersOfNewDrone
 
-open Drone.Api.Features.AddDrone
+open Messages
 
 type Handler () =
-    member this.Handle (message: DroneCreated) =
-        printfn $"Does it work with Type? drone registered: {message.Drone}"
+    member this.Handle (message: DroneEvents) =
+        printfn $"Does it work with Type? drone registered: {message}"

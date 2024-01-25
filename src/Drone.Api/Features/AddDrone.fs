@@ -1,7 +1,7 @@
 ﻿module Drone.Api.Features.AddDrone
 
 open Drone.Api.Database.DroneContext
-open Drone.Api.Domain.Drone
+open Drone.Shared.Domain.Drone
 open Messages
 open Microsoft.AspNetCore.Http
 open Wolverine.Http
@@ -11,9 +11,7 @@ type CreateDrone = {
     Model: string
 }
 
-type DroneCreated = {
-    Drone: Drone
-}
+
 
 type CreatedDrone = DroneId
 
@@ -29,5 +27,5 @@ let createDrone (droneDto: CreateDrone) (context: DroneContext) =
         context.Add drone |> ignore
         let! _ = context.SaveChangesAsync()
         let msg: SharedMessage = { id = drone.Id; text = drone.Model }
-        return struct (Results.Created("/drones", drone.Id), { Drone = drone }, { id = drone.Id; text = drone.Model })
+        return struct (Results.Created("/drones", drone.Id), DroneCreated(drone), { id = drone.Id; text = drone.Model })
     }
