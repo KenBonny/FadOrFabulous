@@ -25,7 +25,8 @@ let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
         .AutoProvision()
         .EnableWolverineControlQueues()
         .UseConventionalRouting(fun r ->
-            r.QueueNameForListener(fun t -> t.Name)
+            r.QueueNameForListener(Messages.createQueueName)
+            r.ExchangeNameForSending(Messages.createQueueName)
             ()
         )
     ()
