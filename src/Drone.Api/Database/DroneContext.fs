@@ -2,6 +2,7 @@
 
 open Drone.Api.Domain.Drone
 open Microsoft.EntityFrameworkCore
+open Newtonsoft.Json
 
 type DroneContext =
     inherit DbContext
@@ -14,3 +15,16 @@ type DroneContext =
     member this.Drones
         with get() = this.drones
         and set value = this.drones <- value
+
+    [<DefaultValue>]
+    val mutable private flights : DbSet<Flight>
+    member this.Flights
+        with get() = this.flights
+        and set value = this.flights <- value
+
+    override this.OnModelCreating (builder: ModelBuilder) =
+        builder.Entity<Flight>().Property(_.Path).HasConversion(
+            (fun path -> JsonConvert.SerializeObject path),
+            (fun path -> JsonConvert.DeserializeObject<FlightPath list> path)
+        ) |> ignore
+        ()

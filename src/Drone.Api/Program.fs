@@ -66,7 +66,7 @@ let main args =
 
     app.UseHttpsRedirection()
     // app.UseAuthorization()
-    app.MapWolverineEndpoints()
+    app.MapWolverineEndpoints(fun o -> o.UseNewtonsoftJsonForSerialization())
     app.UseSwagger().UseSwaggerUI(configureSwaggerUi)
 
     app.Run()
