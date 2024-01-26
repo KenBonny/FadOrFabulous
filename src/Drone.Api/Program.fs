@@ -1,6 +1,7 @@
 module Program
 
 #nowarn "20"
+open System
 open System.IO
 open Drone.Api.Database.DroneContext
 open Drone.Api.WolverineOperationFilter
@@ -14,6 +15,7 @@ open Swashbuckle.AspNetCore.SwaggerGen
 open Swashbuckle.AspNetCore.SwaggerUI
 open Wolverine
 open Wolverine.Http
+open Wolverine.RabbitMQ
 
 [<Literal>]
 let exitCode = 0
@@ -40,15 +42,15 @@ let configureSwaggerUi (options:SwaggerUIOptions) =
 
 let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
     options.ServiceName <- "Drone.Api"
-    // options
-    //     .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
-    //     .EnableWolverineControlQueues()
-    //     .AutoProvision()
-    //     .UseConventionalRouting(fun r ->
-    //         r.QueueNameForListener(Messages.createQueueName)
-    //         r.ExchangeNameForSending(Messages.createQueueName)
-    //         ()
-    //     )
+    options
+        .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
+        .EnableWolverineControlQueues()
+        .AutoProvision()
+        .UseConventionalRouting(fun r ->
+            r.QueueNameForListener(Messages.createQueueName)
+            r.ExchangeNameForSending(Messages.createQueueName)
+            ()
+        )
     ()
 
 [<EntryPoint>]
