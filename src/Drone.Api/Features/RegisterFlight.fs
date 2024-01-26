@@ -1,14 +1,10 @@
 ﻿module Drone.Api.Features.RegisterFlight
 
 open Drone.Api.Database.DroneContext
-open Drone.Api.DiscriminatedUnionMessage
-open Drone.Api.Domain.Drone
+open Drone.Shared.Domain.Drone
+open Messages
 open Microsoft.AspNetCore.Http
 open Wolverine.Http
-
-type FlightRegistered =
-    | FlightRejected of string
-    | FlightRegistered of Flight
 
 [<Tags("Drone")>]
 [<WolverinePost("drone/{droneId}/flight")>]

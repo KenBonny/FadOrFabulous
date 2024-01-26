@@ -9,7 +9,6 @@
     <ItemGroup>
         <Compile Include="Domain\Drone.fs" />
         <Compile Include="Database\DroneContext.fs" />
-        <Compile Include="DiscriminatedUnionMessage.fs" />
         <Compile Include="Features\GetDrones.fs" />
         <Compile Include="Features\AddDrone.fs" />
         <Compile Include="Features\RegisterFlight.fs" />

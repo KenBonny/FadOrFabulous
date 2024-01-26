@@ -2,9 +2,7 @@
 
 open System
 open System.Threading.Tasks
-open Drone.Api.DiscriminatedUnionMessage
 open Drone.Api.Features.AddDrone
-open Drone.Api.Features.RegisterFlight
 open Messages
 open Wolverine.Attributes
 

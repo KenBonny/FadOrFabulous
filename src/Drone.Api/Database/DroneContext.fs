@@ -1,6 +1,7 @@
 ﻿module Drone.Api.Database.DroneContext
 
 open Drone.Api.Domain.Drone
+open Drone.Shared.Domain.Drone
 open Microsoft.EntityFrameworkCore
 open Newtonsoft.Json
 
