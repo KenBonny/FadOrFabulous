@@ -1,6 +1,6 @@
 ﻿module Drone.Api.Database.DroneContext
 
-open Drone.Shared.Domain.Drone
+open Drone.Api.Domain.Drone
 open Microsoft.EntityFrameworkCore
 
 type DroneContext =

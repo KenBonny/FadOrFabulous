@@ -1,4 +1,4 @@
-﻿module Drone.Shared.Domain.Drone
+﻿module Drone.Api.Domain.Drone
 
 type Make = string
 type Model = string

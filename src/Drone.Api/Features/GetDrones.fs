@@ -3,7 +3,7 @@
 open System
 open System.Linq
 open Drone.Api.Database.DroneContext
-open Drone.Shared.Domain.Drone
+open Drone.Api.Domain.Drone
 open Microsoft.AspNetCore.Http
 open Microsoft.EntityFrameworkCore
 open Wolverine.Http

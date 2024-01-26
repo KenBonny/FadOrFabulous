@@ -1,7 +1,7 @@
 ﻿module Drone.Api.Features.AddDrone
 
 open Drone.Api.Database.DroneContext
-open Drone.Shared.Domain.Drone
+open Drone.Api.Domain.Drone
 open Messages
 open Microsoft.AspNetCore.Http
 open Wolverine.Http
