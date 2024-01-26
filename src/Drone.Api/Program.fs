@@ -1,7 +1,6 @@
 module Program
 
 #nowarn "20"
-open System
 open System.IO
 open Drone.Api.Database.DroneContext
 open Drone.Api.WolverineOperationFilter
@@ -15,7 +14,6 @@ open Swashbuckle.AspNetCore.SwaggerGen
 open Swashbuckle.AspNetCore.SwaggerUI
 open Wolverine
 open Wolverine.Http
-open Wolverine.RabbitMQ
 
 [<Literal>]
 let exitCode = 0

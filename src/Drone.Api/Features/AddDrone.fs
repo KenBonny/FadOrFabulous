@@ -11,7 +11,9 @@ type CreateDrone = {
     Model: string
 }
 
-
+type DroneCreated = {
+    drone: Drone
+}
 
 type CreatedDrone = DroneId
 
@@ -27,6 +29,6 @@ let createDrone (droneDto: CreateDrone) (context: DroneContext) =
         context.Add drone |> ignore
         let! _ = context.SaveChangesAsync()
         let msg: SharedMessage = { id = drone.Id; text = drone.Model }
-        let droneCreated = DroneCreated(drone) |> toMessage
+        let droneCreated = { drone = drone }
         return struct (Results.Created("/drones", drone.Id), droneCreated, msg)
     }

@@ -4,7 +4,6 @@ open System
 open System.Linq
 open Drone.Api.Database.DroneContext
 open Drone.Shared.Domain.Drone
-open Messages
 open Microsoft.AspNetCore.Http
 open Microsoft.EntityFrameworkCore
 open Wolverine.Http
@@ -38,20 +37,13 @@ let retrievePage page pageSize =
 [<Tags("Drone")>]
 [<WolverineGet("drones")>]
 let getDrones page pageSize (context: DroneContext) =
-    task {
-        let page, pageSize = retrievePage page pageSize
-
-        let! drones =
-            context.Drones
-                .OrderBy(fun drone -> drone.Make)
-                .ThenBy(fun drone -> drone.Model)
-                .Skip(page)
-                .Take(pageSize)
-                .ToListAsync()
-        let dtos = drones.Select(
-            fun drone ->
-                { Make = drone.Make
-                  Model = drone.Model })
-                    .ToList()
-        return struct (dtos, DronesListed(drones |> List.ofSeq) |> toMessage)
-    }
+    let page, pageSize = retrievePage page pageSize
+    context.Drones
+            .OrderBy(fun drone -> drone.Make)
+            .ThenBy(fun drone -> drone.Model)
+            .Skip(page)
+            .Take(pageSize)
+            .Select(fun drone ->
+               { Make = drone.Make
+                 Model = drone.Model })
+            .ToListAsync()

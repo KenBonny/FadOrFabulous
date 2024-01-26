@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Domian\Drone.fs" />
         <Compile Include="Messages.fs" />
     </ItemGroup>
 
