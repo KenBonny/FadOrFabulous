@@ -47,6 +47,7 @@ let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
         .EnableWolverineControlQueues()
         .AutoProvision()
         .UseConventionalRouting()
+    options.UseNewtonsoftForSerialization()
     ()
 
 [<EntryPoint>]

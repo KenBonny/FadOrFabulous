@@ -6,7 +6,6 @@ open Wolverine.Attributes
 let Handle (message: SharedMessage) =
     printfn $"Shared Message {message.id}: {message.text}"
 
-// todo: message is not picked up
 [<WolverineHandler>]
 let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =
     match message.Payload with

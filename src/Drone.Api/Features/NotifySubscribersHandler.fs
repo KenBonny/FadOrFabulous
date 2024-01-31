@@ -16,12 +16,12 @@ let notifyWithDelay (message: DroneCreated) =
 // [<WolverineHandler>]
 // let processSharedMessage (message: SharedMessage) =
 //     printfn $"Shared message handled: {message}"
-
-[<WolverineHandler>]
-let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =
-    match message.Payload with
-    | FlightRegistered flight -> printfn $"Flight registered: {flight.Id} for drone {flight.DroneId}"
-    | FlightRejected reason -> printfn $"Flight rejected: {reason}"
+//
+// [<WolverineHandler>]
+// let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =
+//     match message.Payload with
+//     | FlightRegistered flight -> printfn $"Flight registered: {flight.Id} for drone {flight.DroneId}"
+//     | FlightRejected reason -> printfn $"Flight rejected: {reason}"
 
 let Handle (message: DroneCreated) =
     printfn $"Does it work with correct naming? drone registered: {message}"
