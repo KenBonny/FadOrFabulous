@@ -6,6 +6,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Drone.Service", "src\Drone.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Drone.Shared", "src\Drone.Shared\Drone.Shared.fsproj", "{D395C381-38D8-46CB-AB56-E965A9AF488B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Drone.Tests", "src\Drone.Tests\Drone.Tests.fsproj", "{3871AB2C-D808-4A3F-A72D-7489DD9D0F02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D395C381-38D8-46CB-AB56-E965A9AF488B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D395C381-38D8-46CB-AB56-E965A9AF488B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D395C381-38D8-46CB-AB56-E965A9AF488B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3871AB2C-D808-4A3F-A72D-7489DD9D0F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3871AB2C-D808-4A3F-A72D-7489DD9D0F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3871AB2C-D808-4A3F-A72D-7489DD9D0F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3871AB2C-D808-4A3F-A72D-7489DD9D0F02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
