@@ -13,9 +13,9 @@ let notifyWithDelay (message: DroneCreated) =
         printfn $"Does it work with attributes? drone registered: {message}"
     }
 
-[<WolverineHandler>]
-let processSharedMessage (message: SharedMessage) =
-    printfn $"Shared message handled: {message}"
+// [<WolverineHandler>]
+// let processSharedMessage (message: SharedMessage) =
+//     printfn $"Shared message handled: {message}"
 
 [<WolverineHandler>]
 let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =

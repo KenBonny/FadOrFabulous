@@ -46,11 +46,7 @@ let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
         .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
         .EnableWolverineControlQueues()
         .AutoProvision()
-        .UseConventionalRouting(fun r ->
-            r.QueueNameForListener(Messages.createQueueName)
-            r.ExchangeNameForSending(Messages.createQueueName)
-            ()
-        )
+        .UseConventionalRouting()
     ()
 
 [<EntryPoint>]
