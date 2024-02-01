@@ -4,13 +4,14 @@ open System
 open System.Threading.Tasks
 open Drone.Api.Features.AddDrone
 open Messages
+open Microsoft.Extensions.Logging
 open Wolverine.Attributes
 
 [<WolverineHandler>]
-let notifyWithDelay (message: DroneCreated) =
+let notifyWithDelay (message: DroneCreated) (logger: ILogger) =
     task {
         do! Task.Delay(TimeSpan.FromSeconds 2)
-        printfn $"Does it work with attributes? drone registered: {message}"
+        logger.LogInformation("Does it work with attributes? drone registered: {Message}", message)
     }
 
 // [<WolverineHandler>]
