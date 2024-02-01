@@ -52,6 +52,39 @@ let rec validateFlight (drone: Drone) existingFlights newFlightPath =
         | Some coordinate -> FlightRejected($"Collision detected at {coordinate.Lat}::{coordinate.Long}")
         | None -> FlightRegistered { Id = 0; DroneId = drone.Id; Path = newFlightPath }
 
+
+/// <summary>Register a flight for a drone</summary>
+/// <remarks>
+/// [
+///   {
+///     "Case": "TakeOff",
+///     "Fields": [
+///       {
+///         "Lat": 1,
+///         "Long": 1
+///       }
+///     ]
+///   },
+///   {
+///     "Case": "Waypoint",
+///     "Fields": [
+///       {
+///         "Lat": 2,
+///         "Long": 2
+///       }
+///     ]
+///   },
+///   {
+///     "Case": "Land",
+///     "Fields": [
+///       {
+///         "Lat": 5,
+///         "Long": 2
+///       }
+///     ]
+///   }
+/// ]
+/// </remarks>
 [<Tags("Drone")>]
 [<WolverinePost("drone/{droneId}/flight")>]
 let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContext) =
@@ -70,19 +103,4 @@ let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContex
 
         let! _ = db.SaveChangesAsync()
         return result
-    }
-
-
-[<Tags("Drone")>]
-[<WolverineGet("drone/{droneId}/flight")>]
-let getFlight droneId =
-    {
-        Id = 1
-        DroneId = droneId
-        Path = [
-            TakeOff { Lat = 1; Long = 1}
-            Waypoint { Lat = 2; Long = 2}
-            Waypoint { Lat = 4; Long = 8}
-            Land { Lat = 5; Long = 2}
-        ]
     }
