@@ -11,11 +11,7 @@ type CreateDrone = {
     Model: string
 }
 
-type DroneCreated = {
-    drone: Drone
-}
-
-type CreatedDrone = DroneId
+type DroneCreated = { drone: Drone }
 
 [<Tags("Drone")>]
 [<WolverinePost("drone")>]
