@@ -356,3 +356,43 @@ let ``No collisions should accept the flight`` () =
 That's really nice, I can easly create existing flights, pass them along to the `RegisterFlight.validateFligth` function and check the result. The discriminated unions make checking the return value really simple.
 
 Also notice the module and test names. They are surrounded with double backticks. F# allows you to write any identifier between double backticks and include special charactes or even sentences. I would not recommend this in production code as it makes referencing and calling functions a little harder as you'll need to write the names of the functions between double backticks as well. But for tests, it's really nice to be able to write a sentence as a test name. No snake or camel case needed.
+
+## Processing messages in the background
+
+The last thing that I want to show is processing messages in the background. Wolverine has support for several message brokers, such as RabbitMQ and Azure Service Bus. I'm going to show how to use RabbitMQ as it's a bit easier to set up and use. This is basic configuration for RabbitMQ and comes practically straight from the Wolverine documentation.
+
+```fsharp
+options
+    .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))
+    .EnableWolverineControlQueues()
+    .AutoProvision()
+    .UseConventionalRouting()
+options.UseNewtonsoftForSerialization()
+```
+
+There is one thing to be aware of when it comes to discriminated unions. When you use them as messages, it all works very nice when you are using the memory bus and processing them locally. When you want to send them over the wire, you need to wrap them in a generic message type.
+
+```fsharp
+type DiscriminatedUnionMessage<'a> = { Payload: 'a }
+
+let toMessage payload = { Payload = payload }
+```
+
+To understand why I need to do this, I need to explain that discriminated unions are basically an empty abstract type with several subtypes. When a message is sent over the wire, it will be deserialised into its specific case. Especially when one of the types is a base type such as `string`, it can be hard to match which handlers should be invoked. Wrapping it in this envelope (call it what you will), allows the router to correctly dispatch the message to the right handlers.
+
+```fsharp
+[<WolverineHandler>]
+let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =
+    match message.Payload with
+    | FlightRejected reason -> printfn $"Flight rejected because {reason}"
+    | FlightRegistered flight -> printfn $"Flightpath added: {flight}"
+```
+
+It's a bit annoying, but it's a small price to pay for the power that discriminated unions give you.
+
+## Conclusion
+Throughout the journey I've showed a few powerful features of functional languages and F# specifically. From easier type systems and piping, to the power of discriminated unions and computational expressions.
+
+If you want to start small, F# has scripting support out of the box. So instead of writing a powershell script of small C# console to do some task. Open up VS Code, create a new file with the `.fsx` extension and start writing F#.
+
+Don't be afraid to dip your toe into the functional world, it's not as scary as it seems.
