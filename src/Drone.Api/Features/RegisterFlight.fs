@@ -17,38 +17,32 @@ let collision first second =
 let detectCollision newPath existingPath =
     match newPath, existingPath with
     | TakeOff coordinate, TakeOff existing -> collision coordinate existing
-    | TakeOff _, Waypoint _ -> None
     | TakeOff coordinate, Land existing -> collision coordinate existing
-    | Waypoint _, TakeOff _ -> None
     | Waypoint coordinate, Waypoint existing -> collision coordinate existing
-    | Waypoint _, Land _ -> None
     | Land coordinate, TakeOff existing -> collision coordinate existing
-    | Land _, Waypoint _ -> None
     | Land coordinate, Land existing -> collision coordinate existing
+    | TakeOff _, Waypoint _ -> None
+    | Waypoint _, TakeOff _ -> None
+    | Waypoint _, Land _ -> None
+    | Land _, Waypoint _ -> None
 
-let rec detectCollisionAlongFlightPath newFlightPath existingFlightPath =
-    match existingFlightPath with
-    | [] -> None
-    | existing :: restOfFlight ->
-        newFlightPath
-        |> List.map (detectCollision existing)
-        |> List.choose id
-        |> List.sort
-        |> function
-            | [] -> detectCollisionAlongFlightPath restOfFlight newFlightPath
-            | first :: _ -> Some first
+let detectCollisionAlongFlightPath (newFlightPath: FlightPath list) (existingFlightPath: FlightPath list) =
+    let equal = List.min [newFlightPath.Length; existingFlightPath.Length] |> List.take
+    List.map2 detectCollision (equal newFlightPath) (equal existingFlightPath)
+    |> List.choose id // remove None
 
-let rec validateFlight (drone: Drone) existingFlights newFlightPath =
+let validateFlight (drone: Drone) existingFlights newFlightPath =
     if obj.ReferenceEquals(drone, null) then
         FlightRejected($"Drone {drone.Id} not found")
     else
-        let collision =
-            existingFlights
-            |> List.map _.Path
-            |> List.map (detectCollisionAlongFlightPath newFlightPath)
-            |> List.choose id
-            |> List.tryHead
-        match collision with
+        existingFlights
+        |> List.collect (fun flight -> detectCollisionAlongFlightPath newFlightPath flight.Path)
+        // |> List.map _.Path
+        // |> List.map2 detectCollisionAlongFlightPath newFlightPath
+        // |> List.collect id // select many
+        |> List.sort
+        |> List.tryHead
+        |> function
         | Some coordinate -> FlightRejected($"Collision detected at {coordinate.Lat}::{coordinate.Long}")
         | None -> FlightRegistered { Id = 0; DroneId = drone.Id; Path = newFlightPath }
 
