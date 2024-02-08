@@ -1,0 +1,3 @@
+﻿# Functional programming in F#: Fad or Fabulous?
+
+Have you been curious about functional programming, especially with the rise of functional concepts in your favourite programming languages? Are you a bit scared of all those scary concepts that you'll have to learn? Good news, I too was overwhelmed by functional programming, but I've found that it's not as scary as it seems. Come find out if F# is worth your time and if functional programming is as fabulous as it seems.
