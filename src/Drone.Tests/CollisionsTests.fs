@@ -1,4 +1,4 @@
-module CollisionsTest
+module ``Collisions Test``
 
 open Drone.Api.Domain.Drone
 open Drone.Api.Features

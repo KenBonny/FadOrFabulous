@@ -296,3 +296,63 @@ Now this is cool, I can put multiple values in a match statement and check all a
 The `collision` function is a simple function that checks if two coordinates are the same and returns an `Option` type. Since the `Coordinate` is a record, it has value equality and thus automatically checks whether all properties contain the same value.
 
 The entire validation logic is about 35 lines long. 70 if you count all the `open` statements and the endpoint definition. This is a very small file for all the things that are going on and this is exactly why I love F#. I can express complex algorithms with relative ease.
+
+## Testing
+
+What would all this beautiful and concise code be worth, if it couldn't be easily tested? Luckily, testing is quite easy in F# as it can use xunit to do so. So all of your xunit knowledge can be reused here.
+
+```fsharp
+module ``Collisions Test``
+
+open Drone.Api.Domain.Drone
+open Drone.Api.Features
+open Drone.Shared.Domain.Drone
+open Messages
+open Xunit
+
+[<Fact>]
+let ``No collisions should accept the flight`` () =
+    let drone : Drone = {
+        Id = 1
+        Make = "DJI"
+        Model = "Mavic 3 Pro"
+    }
+    let existingFlights : Flight list = [
+        {
+            Id = 1
+            DroneId = 1
+            Path = [
+                TakeOff { Lat = 0; Long = 0 }
+                Waypoint { Lat = 1; Long = 1 }
+                Waypoint { Lat = 2; Long = 2 }
+                Land { Lat = 3; Long = 3 }
+            ]
+        }
+        {
+            Id = 2
+            DroneId = 1
+            Path = [
+                TakeOff { Lat = 1; Long = 2 }
+                Waypoint { Lat = 2; Long = 2 }
+                Land { Lat = 4; Long = 4 }
+            ]
+        }
+    ]
+
+    let newPath = [
+        TakeOff { Lat = 0; Long = 1 }
+        Waypoint { Lat = 1; Long = 3 }
+        Waypoint { Lat = 2; Long = 4 }
+        Land { Lat = 3; Long = 1 }
+    ]
+
+    let collision = RegisterFlight.validateFlight drone existingFlights newPath
+    match collision with
+    | FlightRegistered _ -> ()
+    | FlightRejected reason -> Assert.Fail("Should have been accepted: " + reason)
+    ()
+```
+
+That's really nice, I can easly create existing flights, pass them along to the `RegisterFlight.validateFligth` function and check the result. The discriminated unions make checking the return value really simple.
+
+Also notice the module and test names. They are surrounded with double backticks. F# allows you to write any identifier between double backticks and include special charactes or even sentences. I would not recommend this in production code as it makes referencing and calling functions a little harder as you'll need to write the names of the functions between double backticks as well. But for tests, it's really nice to be able to write a sentence as a test name. No snake or camel case needed.
