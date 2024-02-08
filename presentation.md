@@ -1,4 +1,4 @@
-﻿# F#: Fad or Fab?
+﻿# Functional programming in F#: Fad or Fabulous?
 
 ## Overview
 - Who is this for?
