@@ -17,9 +17,6 @@ open Wolverine
 open Wolverine.Http
 open Wolverine.RabbitMQ
 
-[<Literal>]
-let exitCode = 0
-
 let configureEF (options:DbContextOptionsBuilder) =
     options.UseInMemoryDatabase("DroneDb")
     ()
@@ -49,6 +46,9 @@ let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
         .UseConventionalRouting()
     options.UseNewtonsoftForSerialization()
     ()
+
+[<Literal>]
+let exitCode = 0
 
 [<EntryPoint>]
 let main args =

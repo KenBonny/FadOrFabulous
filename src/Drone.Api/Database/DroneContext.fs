@@ -9,7 +9,8 @@ type DroneContext =
     inherit DbContext
 
     new() = { inherit DbContext() }
-    new(options: DbContextOptions<DroneContext>) = { inherit DbContext(options) }
+    new(options: DbContextOptions<DroneContext>) =
+        { inherit DbContext(options) }
 
     [<DefaultValue>]
     val mutable private drones: DbSet<Drone>

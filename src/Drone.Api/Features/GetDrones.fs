@@ -39,11 +39,11 @@ let retrievePage page pageSize =
 let getDrones page pageSize (context: DroneContext) =
     let page, pageSize = retrievePage page pageSize
     context.Drones
-            .OrderBy(fun drone -> drone.Make)
-            .ThenBy(fun drone -> drone.Model)
-            .Skip(page)
-            .Take(pageSize)
-            .Select(fun drone ->
-               { Make = drone.Make
-                 Model = drone.Model })
-            .ToListAsync()
+        .OrderBy(fun drone -> drone.Make)
+        .ThenBy(fun drone -> drone.Model)
+        .Skip(page)
+        .Take(pageSize)
+        .Select(fun drone ->
+           { Make = drone.Make
+             Model = drone.Model })
+        .ToListAsync()
