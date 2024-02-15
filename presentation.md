@@ -11,10 +11,12 @@
     - csharp framework
     - messages are central
   - Entity Framework
+- Setting up the API
 - Getting drone data
   - functions
   - lambda functions
   - simplified types
+- Entity Framework setup
 - Creating a new drone
   - computational expressions: task, others such as http and sql
   - let! and do!
@@ -34,7 +36,7 @@
   - discriminated unions and serialisation
 
 ## Who is this for?
-Welcome to this talk on F# and Wolverine. I'm going to be talking about how I used F# and Wolverine to build a drone delivery system. It's a very simple example system so I'm hoping that it will be easy to follow along. I hope that I can convey that F# is not as difficult as it may seem and that it's a very viable option for building systems.
+Welcome to this talk on F# and Wolverine. I'm going to be telling you about how I used F# and Wolverine to build a drone tracking system. It's a very simple example system so I'm hoping that it will be easy to follow along. I hope that I can convey that F# is not as difficult as it may seem and that it's a very viable option for building systems.
 
 What I'm not going to do is go into every minute detail of F#. There are a lot of introduction to F# articles out there, so I'm going to focus more on the more useful patterns and practices that make F# such a joy to use. The code I write here should be easy to understand, even if you've never seen F# before.
 
@@ -45,8 +47,40 @@ I'm pairing it with Wolverine. Wolverine is a framework that makes it easy to pr
 
 Lastly, the major technology used is Entity Framework. This is mainly done to show that F# and EF work well together. Support in C# is better, but F# is still good.
 
+## Setting up the API
+
+Setting the API up is a very simple thing as Wolverine extends the ASP.NET framework. 
+
+```fsharp
+[<EntryPoint>]
+let main args =
+
+    let builder = WebApplication.CreateBuilder(args)
+
+    builder.Services
+        .AddEndpointsApiExplorer()
+        .AddDbContext<DroneContext>(configureEF)
+        .AddSwaggerGen(configureSwaggerGen)
+    builder.Host.UseWolverine(configureWolverine builder.Configuration)
+
+    let app = builder.Build()
+
+    app.UseHttpsRedirection()
+    // app.UseAuthorization()
+    app.MapWolverineEndpoints(fun o -> o.UseNewtonsoftJsonForSerialization())
+    app.UseSwagger().UseSwaggerUI(configureSwaggerUi)
+
+    app.Run()
+
+    exitCode
+```
+
+In accordance to the Wolverine documentation, I'm adding the `MapWolverineEndpoints` which will find all the Wolverine endpoints. Defining endpoints will be discussed momentarily. Out of the box, Wolverine uses `System.Text.Json` for serialisation. I've chosen to use `Newtonsoft.Json` as it has better support for discriminated unions. I'll get more into that later.
+
+What I want to focus on here is the `UseWolverine` function. This takes a lambda function that passes a `WolverineOptions` object and returns void. Yet, here we se a `configureWolverine` function that _"only"_ takes configuration. This is partial application of a function. You can read how it works in the [F# for Fun and Profit](https://fsharpforfunandprofit.com/posts/partial-application/). It allows me to create another function from an already existing function by providing the first parameters. F# is full of nice little tricks like this.
+
 ## Getting drone data
-The most simple thing that I can start with is retrieving drone data. This will take the form of an http endpoint that can be called. I'm going to use a simple function to do this. With the `let` keyword, I can define both functions as well as values, for more information check the [official docs](https://fsharp.org/docs/) and the [cheat sheet](https://github.com/fsprojects/fsharp-cheatsheet/blob/master/docs/fsharp-cheatsheet.md) or [F# for fun and profit](https://fsharpforfunandprofit.com/posts/fsharp-in-60-seconds/).
+The most simple thing that I can start with is retrieving drone data. This will take the form of an http endpoint that can be called. I'm going to use a simple function to do this. With the `let` keyword, I can define both functions as well as values, for more information check the [official docs](https://fsharp.org/docs/) and the [cheat sheet](https://github.com/fsprojects/fsharp-cheatsheet/blob/master/docs/fsharp-cheatsheet.md) or [F# for Fun and Profit](https://fsharpforfunandprofit.com/posts/fsharp-in-60-seconds/).
 
 ```fsharp
 type Model = string
@@ -74,7 +108,27 @@ Creating lambda or anonymous functions is also very easy. I use the `fun` keywor
 
 In the selection, the type is inferred again as the `DroneDto` record. A simple type like this is equivalent to a C# record and it's very simple to create. Also note that I can create aliases for any type that already exists. Instead of saying that a `Model` is a string, I can say that it's a `Model` type. This does not create warnings as an alias is just that, an alias. It's not a new type. Later, I'll show how to protect yourself better.
 
-A last point to note is the strange notation of the attributes `[<Tags>]` and `[<WolverineGet>]`. These are attributes that Wolverine uses to know how to route the request. The `Tags` attribute is used to group endpoints together. The reason that it's different from C# is that F# has collection initialisers for a very long time. `[1; 2; 3]` creates an F# list of `int`s and `[| 1; 2; 3 |]` creates an array. I'm again referring to the docs, the cheat sheet and F# for fun and profit for more information on colletions in F#. Let me just add that I find a bit confusing that almost every programming language uses square brackets for arrays and F# uses them for lists. This is because the F# list is much more used and thus got the easier notation. That does not make it any less confusing.
+A last point to note is the strange notation of the attributes `[<Tags>]` and `[<WolverineGet>]`. These are attributes that Wolverine uses to know how to route the request. The `Tags` attribute is used to group endpoints together. The reason that it's different from C# is that F# has collection initialisers for a very long time. `[1; 2; 3]` creates an F# list of `int`s and `[| 1; 2; 3 |]` creates an array. I'm again referring to the docs, the cheat sheet and F# for Fun and Profit for more information on collections in F#. Let me just add that I find a bit confusing that almost every programming language uses square brackets for arrays and F# uses them for lists. This is because the F# list is much more used and thus got the easier notation. That does not make it any less confusing.
+
+## Entity Framework setup
+
+Setting up Entity Framework is quite similar to C#. Since F# doesn't have the same auto properties that C# has, it does take a bit more code to  create a `DbSet<>`. Nothing that can't be easily solved with a template though.
+
+One thing that needs to added is that each type that is an Entity Framework table representation needs the attribute `[CLIMutable]`. This allows the CLR to mutate the properties, while in code they would need to be marked as `mutable`. This is where you see that EF is mainly meant for C#. I would look to a more F# friendly ORM if I were to use F# as my language of choice. There are plenty of good candidates out there.
+
+```fsharp
+type DroneContext =
+    inherit DbContext
+
+    new() = { inherit DbContext() }
+    new(options: DbContextOptions<DroneContext>) = { inherit DbContext(options) }
+
+    [<DefaultValue>]
+    val mutable private drones: DbSet<Drone>
+    member this.Drones
+        with get() = this.drones
+        and set value = this.drones <- value
+```
 
 ## Creating a new drone
 Now what would retrieving drone functionality be if there was no way of creating one.
@@ -389,6 +443,12 @@ let flightRegistered (message: DiscriminatedUnionMessage<FlightRegistered>) =
 ```
 
 It's a bit annoying, but it's a small price to pay for the power that discriminated unions give you.
+
+## Architecture
+
+I haven't talked about this explicitly, but Wolverine guides you into a vertical slice architecture. All features live in separate files or folders, segregating concepts and logic into their own little corners. This makes sharing code a bit harder, but still very doable. The upside is that when I want to change behavior of a certain feature, I only need to look in one place. I can also be very confident that it will not affect any other functionality.
+
+This architecture is proving to be very useful as the sharing of code is, in my opinion, not as important as the ability to change code. In my experience, I've seen a lot of project take a lot of steps to make code sharable, yet it's very rare that code is actually shared. Changing code is much more common and thus should be easier. This is where Wolverine and F# guide you into the pit of success.
 
 ## Conclusion
 Throughout the journey I've showed a few powerful features of functional languages and F# specifically. From easier type systems and piping, to the power of discriminated unions and computational expressions.
