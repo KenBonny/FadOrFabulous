@@ -25,6 +25,7 @@
   - discriminated unions
   - pipe operator
   - pattern matching
+- Side effects
 - testing
   - xunit
   - readable names for tests
@@ -239,21 +240,16 @@ let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContex
         let existingFlights = existingFlights |> List.ofSeq
         let flightRegistered = validateFlight drone existingFlights trajectory
         let message = flightRegistered
-        let result =
+        return 
             match flightRegistered with
-            | FlightRejected reason -> struct (Results.NotFound(reason), message)
-            | FlightRegistered flight ->
-                db.Flights.Add(flight) |> ignore
-                struct (Results.Ok(flight.Id), message)
-
-        let! _ = db.SaveChangesAsync()
-        return result
+            | FlightRejected reason -> struct (Results.NotFound(reason), message, SaveFlight(None))
+            | FlightRegistered flight -> struct (Results.Ok(flight.Id), message, SaveFlight(Some flight))
     }
 ```
 
 If the body of the request contains correct JSON, Wolverine will automatically deserialize it into the `FlightPath` list. The thing that you have to be aware of is that Wolverine, out of the box, uses the `System.Text.Json` library. It does not support discriminated unions out of the box. I had to configure Wolverine to use the `Newtonsoft.Json` library. This is not a problem as Wolverine is very flexible in this regard. It's just something to be aware of.
 
-In the method body, I'm using a pattern that I'm growing ever more fond of: first load all the data that I will need and then process or validate it. After all processing is done, I can then save the data. This will make writing automated tests later a lot easier as I can focus on the processing and not on the loading and saving of data.
+In the method body, I'm using a pattern that I'm growing ever more fond of: first load all the data that I will need and then process or validate it. After all processing is done, I can then save the data. Wolverine even helps with this in the form of side effects. This will make writing automated tests later a lot easier as I can focus on the processing and not on the loading and saving of data.
 
 Before I'm going to focus on the validation part, I'm going to highlight the result creation. The output of the validation will be another discriminated union on which we can make decisions about the HTTP response and wether or not to save the flight to our database.
 
@@ -350,6 +346,28 @@ Now this is cool, I can put multiple values in a match statement and check all a
 The `collision` function is a simple function that checks if two coordinates are the same and returns an `Option` type. Since the `Coordinate` is a record, it has value equality and thus automatically checks whether all properties contain the same value.
 
 The entire validation logic is about 35 lines long. 70 if you count all the `open` statements and the endpoint definition. This is a very small file for all the things that are going on and this is exactly why I love F#. I can express complex algorithms with relative ease.
+
+## Side effects
+
+Wolverine has this neat feature where I can easily define what a side effect is. Basically it's, you can guess it by now, a certain kind of message or event. In this case, the specific instruction to save a flight to the database. This can be any state altering action: updating a redis cache, writing to a file, making http calls. Wolverine lets me define a side effect through the marker interface `ISideEffect`.
+
+```fsharp
+type SaveFlight(flight: Flight option) =
+    interface ISideEffect
+
+
+    member this.ExecuteAsync (ctx: DroneContext) token =
+        task {
+            match flight with
+            | None -> ()
+            | Some flight ->
+                ctx.Flights.Add flight |> ignore
+                let! _ = ctx.SaveChangesAsync(token)
+                ()
+        }
+```
+
+The `SaveFlight` takes the information it needs to save the flight and it expects a method named `Execute` or `ExecuteAsync` to handle the work. The reason the method is not defined on the interface, is that you can't specify what is needed to be injected. For example, I can inject the `DbContext` into the `SaveFlight` side effect. The side effect can then be very small as it expects all the verification to be handled by whatever function created this effect.
 
 ## Testing
 
