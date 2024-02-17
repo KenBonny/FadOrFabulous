@@ -2,6 +2,7 @@
 
 open Drone.Api.Database.DroneContext
 open Drone.Api.Domain.Drone
+open Drone.Api.Features.SaveFlight
 open Drone.Shared.Domain.Drone
 open Messages
 open Microsoft.AspNetCore.Http
@@ -88,13 +89,8 @@ let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContex
         let existingFlights = existingFlights |> List.ofSeq
         let flightRegistered = validateFlight drone existingFlights trajectory
         let message = flightRegistered |> toMessage
-        let result =
+        return
             match flightRegistered with
-            | FlightRejected reason -> struct (Results.NotFound(reason), message)
-            | FlightRegistered flight ->
-                db.Flights.Add(flight) |> ignore
-                struct (Results.Ok(flight.Id), message)
-
-        let! _ = db.SaveChangesAsync()
-        return result
+            | FlightRejected reason -> struct (Results.NotFound(reason), message, SaveFlight(None))
+            | FlightRegistered flight -> struct (Results.Ok(flight.Id), message, SaveFlight(Some flight))
     }
