@@ -7,7 +7,6 @@ open Wolverine
 type SaveFlight(flight: Flight option) =
     interface ISideEffect
 
-
     member this.ExecuteAsync (ctx: DroneContext) token =
         task {
             match flight with

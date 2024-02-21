@@ -47,7 +47,6 @@ let validateFlight (drone: Drone) existingFlights newFlightPath =
         | Some coordinate -> FlightRejected($"Collision detected at {coordinate.Lat}::{coordinate.Long}")
         | None -> FlightRegistered { Id = 0; DroneId = drone.Id; Path = newFlightPath }
 
-
 /// <summary>Register a flight for a drone</summary>
 /// <remarks>
 /// [
@@ -91,6 +90,6 @@ let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContex
         let message = flightRegistered |> toMessage
         return
             match flightRegistered with
-            | FlightRejected reason -> struct (Results.NotFound(reason), message, SaveFlight(None))
+            | FlightRejected reason -> struct (Results.Problem(reason), message, SaveFlight(None))
             | FlightRegistered flight -> struct (Results.Ok(flight.Id), message, SaveFlight(Some flight))
     }
