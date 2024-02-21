@@ -8,7 +8,7 @@ let createQueueName (t:System.Type) = $"{t.Namespace}.{t.Name}".Replace(".", "-"
 
 type DiscriminatedUnionMessage<'a> = { Payload: 'a }
 
-let toMessage payload = { Payload = payload }
+let inline toMessage payload = { Payload = payload }
 
 type SharedMessage = {
   id: int
