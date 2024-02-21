@@ -207,9 +207,9 @@ Notice that the module ends with the _Handler_ suffix and that we can have eithe
 If I'd want, I could fine tune handler discovery during startup since Wolverine is quite flexible in this way. Wolverine also has a number of suffixes for classes and methods so be sure to check out their docs for all cases. I found these the most easy to start with.
 
 ## Registering a flight
-At this point, you might be wondering why F# is better than C#. All I've shown so far is that it requires less brackets, it can pipe data through functions and that creating records is a bit easier. That is, until I start processing data, that is where F# (and most functional languages) really shine.
+At this point, you might be wondering why F# is better than C#. All I've shown so far is that it requires less brackets, it can create functions and records easier and it's backwards compatible with C#. Let me tell you how F# makes processing data a lot more readable and fault tolerant. That's where F# (and most functional languages) really shine.
 
-So let me introduce the concept of a flight: a flight is a drone that will fly a certian route. A deceptively simple concept that hides quite the bit of complexity. To keep it all understandable, I'm going to ignore some aspects and say that all flights occur at the same time and at the same altitude. The resulting complexity will be enough to demonstrate my point.
+So let me introduce the concept of a flight: a flight is a drone that will fly a certain route. A deceptively simple concept that hides quite the bit of complexity. To keep it all understandable, I'm going to ignore some aspects and say that all flights occur at the same time and at the same altitude. The resulting complexity will be enough to demonstrate my point.
 
 ```fsharp
 type Coordinate = { Lat: int; Long: int }
