@@ -274,6 +274,19 @@ Type Result<'T, 'TError> =
 
 Generic types, which can be used in conjunction with discriminated unions, are noted with an apostrophe. This is to differentiate them from regular types. The `Option` denotes a possible value, as `Nullable<T>` does in C#. The `Result` denotes a value that can be an error or a value. They even have computational expressions that can be used to chain operations together. When `let!` is used and a `None` or `Error` is detected, the computation will stop and the `None` or `Error` will be returned.
 
+When I add cases, the compiler gives me a nice warning that I have not handled all cases and where to find them. This makes finding missing features or bugs trivial. I recommend either paying very close attention to all the warnings that the F# compiler gives you or, which is even better, to treat them as errors.
+
+```fsharp
+type FlightRegistered =
+    | FlightRejected of string
+    | Collision of Coordinate
+    | FlightRegistered of Flight
+
+// compiler output
+// 1>RegisterFlight.fs(92,19): Warning FS0025 : Incomplete pattern matches on this expression. For example, the value 'Collision (_)' may indicate a case not covered by the pattern(s).
+// 2>ProcessDataAsync.fs(11,11): Warning FS0025 : Incomplete pattern matches on this expression. For example, the value 'Collision (_)' may indicate a case not covered by the pattern(s).
+```
+
 With a better understanding of discrimintated unions, lets take a look at the validation.
 
 ```fsharp
