@@ -47,3 +47,27 @@ let getDrones page pageSize (context: DroneContext) =
            { Make = drone.Make
              Model = drone.Model })
         .ToListAsync()
+
+
+// open FsToolkit.ErrorHandling
+// type Email = string
+// type User = { Email: Email; Age: int }
+// type InvalidUser =
+//     | NotAnEmail of string
+//     | TooYoung of int
+//     | InvalidAge of string
+// let tryParseEmailAddress (email: string) : Result<Email, InvalidUser> =
+//     if email.Contains "@" then Ok email else Error (NotAnEmail email)
+//
+// let tryParseAge (age: string) : Result<int, InvalidUser> =
+//     match Int32.TryParse age with
+//     | true, age when age >= 18 -> Ok age
+//     | true, age -> Error (TooYoung age)
+//     | _ -> Error (InvalidAge age)
+//
+// let tryUserSignup email age =
+//     result { 
+//         let! email = tryParseEmailAddress email
+//         let! age = tryParseAge age
+//         return { Email = email; Age = age }
+//     }
