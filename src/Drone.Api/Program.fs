@@ -37,7 +37,7 @@ let configureSwaggerUi (options:SwaggerUIOptions) =
     options.ConfigObject.TryItOutEnabled <- true
     ()
 
-let configureWolverine (config:IConfiguration) (options:WolverineOptions) =
+let configureWolverine (config:IConfiguration) (options:WolverineOptions) : unit =
     options.ServiceName <- "Drone.Api"
     options
         .UseRabbitMq(Uri(config.GetConnectionString("RabbitMQ")))

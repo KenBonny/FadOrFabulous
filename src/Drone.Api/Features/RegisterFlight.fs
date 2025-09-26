@@ -36,11 +36,9 @@ let validateFlight (drone: Drone) existingFlights newFlightPath =
     if obj.ReferenceEquals(drone, null) then
         FlightRejected($"Drone {drone.Id} not found")
     else
+        let detectCollisions flight = detectCollisionAlongFlightPath newFlightPath flight.Path
         existingFlights
-        |> List.collect (fun flight -> detectCollisionAlongFlightPath newFlightPath flight.Path)
-        // |> List.map _.Path
-        // |> List.map2 detectCollisionAlongFlightPath newFlightPath
-        // |> List.collect id // select many
+        |> List.collect detectCollisions
         |> List.sort
         |> List.tryHead
         |> function
@@ -85,9 +83,9 @@ let registerFlight (droneId: int) (trajectory: FlightPath list) (db: DroneContex
     task {
         let! drone = db.Drones.FindAsync(droneId)
         let! existingFlights = db.Flights.ToListAsync()
-        let existingFlights = existingFlights |> List.ofSeq
+        let existingFlights = List.ofSeq existingFlights
         let flightRegistered = validateFlight drone existingFlights trajectory
-        let message = flightRegistered |> toMessage
+        let message = toMessage flightRegistered
         return
             match flightRegistered with
             | FlightRejected reason -> struct (Results.Problem(reason), message, SaveFlight(None))
